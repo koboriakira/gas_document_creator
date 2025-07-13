@@ -1,0 +1,54 @@
+{
+  "name": "gas-document-creator",
+  "version": "1.0.0",
+  "description": "Google Apps Script API for Google Documents operations",
+  "main": "Code.gs",
+  "scripts": {
+    "deploy": "clasp push && clasp deploy",
+    "push": "clasp push",
+    "pull": "clasp pull",
+    "login": "clasp login",
+    "create": "clasp create --type webapp",
+    "open": "clasp open",
+    "logs": "clasp logs",
+    "version": "clasp version",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/ test/ *.js",
+    "lint:fix": "eslint src/ test/ *.js --fix"
+  },
+  "keywords": [
+    "google-apps-script",
+    "google-docs",
+    "api",
+    "automation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@google/clasp": "^2.4.2",
+    "@types/google-apps-script": "^1.0.83",
+    "@types/jest": "^29.5.5",
+    "eslint": "^8.50.0",
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "./jest.setup.js"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "*.js",
+      "!*.test.js",
+      "!test_api.js",
+      "!jest.setup.js",
+      "!node_modules/**"
+    ],
+    "testMatch": [
+      "**/test/**/*.test.js",
+      "**/*.test.js"
+    ]
+  }
+}
