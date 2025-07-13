@@ -54,6 +54,37 @@ npm run deploy
 }
 ```
 
+## API仕様書
+
+詳細なAPI仕様は `openapi.yaml` をご参照ください。
+
+### ブラウザで仕様書を表示
+
+```bash
+# ローカルサーバー起動 + ブラウザでAPI仕様書を開く
+npm run docs:serve
+
+# または手動で
+npm run docs
+# 別ターミナルで
+npm run docs:open
+```
+
+ブラウザで http://localhost:3000/docs.html にアクセスするとSwagger UIでインタラクティブなAPI仕様書が表示されます。
+
+## テスト
+
+```bash
+# 単体テスト実行
+npm test
+
+# テスト監視モード
+npm run test:watch
+
+# カバレッジレポート生成
+npm run test:coverage
+```
+
 ## GitHub Actions設定
 
 以下のシークレットを設定してください:

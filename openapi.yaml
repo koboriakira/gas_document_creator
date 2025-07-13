@@ -1,0 +1,312 @@
+openapi: 3.0.3
+info:
+  title: Google Apps Script Document Creator API
+  description: |
+    Google Apps ScriptでGoogleドキュメントを操作するREST API
+    
+    このAPIを使用してGoogleドキュメントの作成、更新、削除操作を実行できます。
+    すべての操作はGoogle Apps Scriptのセキュリティコンテキストで実行されます。
+  version: 1.0.0
+  contact:
+    name: GAS Document Creator
+  license:
+    name: MIT
+
+servers:
+  - url: https://script.google.com/macros/s/AKfycbxqxXYEplsKkGSzkehvo8yJEh2C5fZXPwIbOzixu_lpIVdaWJzTZ4tPS0f3UuGvD4M0/exec
+    description: Production Google Apps Script Web App
+
+paths:
+  /:
+    get:
+      summary: APIステータス取得
+      description: APIの基本情報とバージョンを取得します
+      operationId: getApiStatus
+      responses:
+        '200':
+          description: APIステータス情報
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiStatus'
+              example:
+                message: "Google Apps Script Document API"
+                version: "1.0.0"
+                endpoints:
+                  - "POST /exec - Main API endpoint"
+
+    post:
+      summary: ドキュメント操作実行
+      description: |
+        actionパラメータに基づいてドキュメント操作を実行します。
+        対応操作: createDocument, updateDocument, deleteDocument
+      operationId: executeDocumentAction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/CreateDocumentRequest'
+                - $ref: '#/components/schemas/UpdateDocumentRequest'
+                - $ref: '#/components/schemas/DeleteDocumentRequest'
+            examples:
+              createDocument:
+                summary: ドキュメント作成例
+                value:
+                  action: "createDocument"
+                  title: "新しいドキュメント"
+                  content: "ドキュメントの初期内容"
+              updateDocument:
+                summary: ドキュメント更新例
+                value:
+                  action: "updateDocument"
+                  documentId: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+                  content: "更新された内容"
+              deleteDocument:
+                summary: ドキュメント削除例
+                value:
+                  action: "deleteDocument"
+                  documentId: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+      responses:
+        '200':
+          description: 操作成功
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/CreateDocumentResponse'
+                  - $ref: '#/components/schemas/UpdateDocumentResponse'
+                  - $ref: '#/components/schemas/DeleteDocumentResponse'
+              examples:
+                createSuccess:
+                  summary: ドキュメント作成成功
+                  value:
+                    documentId: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+                    title: "新しいドキュメント"
+                    url: "https://docs.google.com/document/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit"
+                updateSuccess:
+                  summary: ドキュメント更新成功
+                  value:
+                    documentId: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+                    title: "ドキュメントタイトル"
+                    lastModified: "2023-12-01T10:30:00.000Z"
+                deleteSuccess:
+                  summary: ドキュメント削除成功
+                  value:
+                    message: "Document deleted successfully"
+                    documentId: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+        '400':
+          description: リクエストエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidAction:
+                  summary: 無効なアクション
+                  value:
+                    error: "Invalid action"
+                missingTitle:
+                  summary: タイトル不足
+                  value:
+                    error: "Title is required"
+                missingDocumentId:
+                  summary: ドキュメントID不足
+                  value:
+                    error: "Document ID is required"
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                internalError:
+                  summary: 内部サーバーエラー
+                  value:
+                    error: "Internal server error"
+                createFailed:
+                  summary: ドキュメント作成失敗
+                  value:
+                    error: "Failed to create document"
+                updateFailed:
+                  summary: ドキュメント更新失敗
+                  value:
+                    error: "Failed to update document"
+                deleteFailed:
+                  summary: ドキュメント削除失敗
+                  value:
+                    error: "Failed to delete document"
+
+components:
+  schemas:
+    ApiStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          description: API名
+          example: "Google Apps Script Document API"
+        version:
+          type: string
+          description: APIバージョン
+          example: "1.0.0"
+        endpoints:
+          type: array
+          items:
+            type: string
+          description: 利用可能なエンドポイント一覧
+          example: ["POST /exec - Main API endpoint"]
+      required:
+        - message
+        - version
+        - endpoints
+
+    CreateDocumentRequest:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [createDocument]
+          description: 実行するアクション
+        title:
+          type: string
+          description: ドキュメントのタイトル
+          example: "新しいドキュメント"
+          minLength: 1
+        content:
+          type: string
+          description: ドキュメントの初期内容（オプション）
+          example: "ドキュメントの初期内容"
+      required:
+        - action
+        - title
+
+    UpdateDocumentRequest:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [updateDocument]
+          description: 実行するアクション
+        documentId:
+          type: string
+          description: 更新対象のドキュメントID
+          example: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+          minLength: 1
+        content:
+          type: string
+          description: 新しいドキュメント内容
+          example: "更新された内容"
+      required:
+        - action
+        - documentId
+
+    DeleteDocumentRequest:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [deleteDocument]
+          description: 実行するアクション
+        documentId:
+          type: string
+          description: 削除対象のドキュメントID
+          example: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+          minLength: 1
+      required:
+        - action
+        - documentId
+
+    CreateDocumentResponse:
+      type: object
+      properties:
+        documentId:
+          type: string
+          description: 作成されたドキュメントのID
+          example: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+        title:
+          type: string
+          description: ドキュメントのタイトル
+          example: "新しいドキュメント"
+        url:
+          type: string
+          format: uri
+          description: ドキュメントの編集URL
+          example: "https://docs.google.com/document/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit"
+      required:
+        - documentId
+        - title
+        - url
+
+    UpdateDocumentResponse:
+      type: object
+      properties:
+        documentId:
+          type: string
+          description: 更新されたドキュメントのID
+          example: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+        title:
+          type: string
+          description: ドキュメントのタイトル
+          example: "ドキュメントタイトル"
+        lastModified:
+          type: string
+          format: date-time
+          description: 最終更新日時（ISO 8601形式）
+          example: "2023-12-01T10:30:00.000Z"
+      required:
+        - documentId
+        - title
+        - lastModified
+
+    DeleteDocumentResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: 削除完了メッセージ
+          example: "Document deleted successfully"
+        documentId:
+          type: string
+          description: 削除されたドキュメントのID
+          example: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+      required:
+        - message
+        - documentId
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: エラーメッセージ
+          example: "Invalid action"
+      required:
+        - error
+
+  securitySchemes:
+    GoogleAuth:
+      type: oauth2
+      description: |
+        Google Apps Scriptの実行権限が必要です。
+        Web Appの設定で「Anyone can access」に設定されている場合は認証不要です。
+      flows:
+        implicit:
+          authorizationUrl: https://accounts.google.com/o/oauth2/auth
+          scopes:
+            'https://www.googleapis.com/auth/documents': Googleドキュメントの読み書き権限
+            'https://www.googleapis.com/auth/drive.file': Google Driveファイルのアクセス権限
+
+security:
+  - GoogleAuth:
+      - 'https://www.googleapis.com/auth/documents'
+      - 'https://www.googleapis.com/auth/drive.file'
+  - [] # 認証不要（Web Appが「Anyone can access」設定の場合）
+
+tags:
+  - name: documents
+    description: Googleドキュメント操作
+  - name: status
+    description: APIステータス

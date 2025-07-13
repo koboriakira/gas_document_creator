@@ -19,6 +19,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Linting
 - `npm run lint` - Lint JavaScript files in src/, test/, and root
 
+### Documentation
+- `npm run docs:serve` - Start local server and open API documentation in browser
+- `npm run docs` - Start local HTTP server on port 3000
+- `npm run docs:open` - Open docs.html in default browser
+
 ## Architecture Overview
 
 This project is a Google Apps Script web application that provides a REST API for Google Document operations. The codebase is designed for both Google Apps Script execution and local testing.
@@ -77,3 +82,14 @@ Automated deployment is configured via `.github/workflows/deploy.yml`. Required 
 - **GOOGLE_APPLICATION_CREDENTIALS**: Google service account JSON (optional, for enhanced authentication)
 
 The workflow runs tests first, then deploys to GAS only on main branch pushes.
+
+## API Documentation
+
+OpenAPI 3.0 specification is available in `openapi.yaml`. The API provides three main operations:
+
+- **GET /** - Retrieve API status and version information
+- **POST /** with `action: "createDocument"` - Create new Google Document
+- **POST /** with `action: "updateDocument"` - Update existing document content
+- **POST /** with `action: "deleteDocument"` - Move document to trash
+
+All operations return JSON responses with standardized error handling.

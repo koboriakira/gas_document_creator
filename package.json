@@ -16,7 +16,10 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint src/ test/ *.js",
-    "lint:fix": "eslint src/ test/ *.js --fix"
+    "lint:fix": "eslint src/ test/ *.js --fix",
+    "docs": "python3 -m http.server 3000",
+    "docs:open": "open http://localhost:3000/docs.html",
+    "docs:serve": "npm run docs & npm run docs:open"
   },
   "keywords": [
     "google-apps-script",
