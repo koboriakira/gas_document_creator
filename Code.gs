@@ -1,111 +1,135 @@
-// Document操作のビジネスロジック
+// Google Apps Script Document Creator API
+// Generated from TypeScript sources
+
 class DocumentService {
-  static createDocument(title, content) {
-    if (!title) {
-      throw new Error('Title is required');
+    /**
+     * 新しいドキュメントを作成
+     */
+    static createDocument(title, content) {
+      if (!title) {
+        throw new Error("Title is required");
+      }
+      const doc = DocumentApp.create(title);
+      if (content) {
+        const body = doc.getBody();
+        body.setText(content);
+      }
+      return {
+        documentId: doc.getId(),
+        title: doc.getName(),
+        url: doc.getUrl()
+      };
     }
-    
-    const doc = DocumentApp.create(title);
-    
-    if (content) {
+    /**
+     * 既存のドキュメントを更新
+     */
+    static updateDocument(documentId, content) {
+      if (!documentId) {
+        throw new Error("Document ID is required");
+      }
+      const doc = DocumentApp.openById(documentId);
       const body = doc.getBody();
-      body.setText(content);
+      if (content !== void 0) {
+        body.setText(content);
+      }
+      return {
+        documentId: doc.getId(),
+        title: doc.getName(),
+        lastModified: (/* @__PURE__ */ new Date()).toISOString()
+      };
     }
-    
-    return {
-      documentId: doc.getId(),
-      title: doc.getName(),
-      url: doc.getUrl()
-    };
+    /**
+     * ドキュメントを削除（ゴミ箱に移動）
+     */
+    static deleteDocument(documentId) {
+      if (!documentId) {
+        throw new Error("Document ID is required");
+      }
+      const file = DriveApp.getFileById(documentId);
+      file.setTrashed(true);
+      return {
+        message: "Document deleted successfully",
+        documentId
+      };
+    }
   }
-  
-  static updateDocument(documentId, content) {
-    if (!documentId) {
-      throw new Error('Document ID is required');
-    }
-    
-    const doc = DocumentApp.openById(documentId);
-    const body = doc.getBody();
-    
-    if (content !== undefined) {
-      body.setText(content);
-    }
-    
-    return {
-      documentId: doc.getId(),
-      title: doc.getName(),
-      lastModified: new Date().toISOString()
-    };
-  }
-  
-  static deleteDocument(documentId) {
-    if (!documentId) {
-      throw new Error('Document ID is required');
-    }
-    
-    const file = DriveApp.getFileById(documentId);
-    file.setTrashed(true);
-    
-    return {
-      message: 'Document deleted successfully',
-      documentId: documentId
-    };
-  }
-}
+})();
 
-// レスポンス生成のヘルパー関数
 class ResponseHelper {
-  static createResponse(statusCode, data) {
-    return ContentService
-      .createTextOutput(JSON.stringify(data))
-      .setMimeType(ContentService.MimeType.JSON);
+    /**
+     * 標準的なレスポンスを作成
+     */
+    static createResponse(statusCode, data) {
+      return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
+    }
+    /**
+     * 成功レスポンスを作成
+     */
+    static createSuccessResponse(data) {
+      return this.createResponse(200, data);
+    }
+    /**
+     * エラーレスポンスを作成
+     */
+    static createErrorResponse(statusCode, message) {
+      return this.createResponse(statusCode, { error: message });
+    }
   }
-  
-  static createSuccessResponse(data) {
-    return this.createResponse(200, data);
-  }
-  
-  static createErrorResponse(statusCode, message) {
-    return this.createResponse(statusCode, { error: message });
-  }
-}
+})();
 
-// リクエストハンドリングのロジック
 class RequestHandler {
-  static handleCreateDocument(request) {
-    try {
-      const { title, content } = request;
-      const result = DocumentService.createDocument(title, content);
-      return ResponseHelper.createSuccessResponse(result);
-    } catch (error) {
-      console.error('Error creating document:', error);
-      return ResponseHelper.createErrorResponse(500, 'Failed to create document');
+    /**
+     * ドキュメント作成リクエストを処理
+     */
+    static handleCreateDocument(request) {
+      try {
+        const { title, content } = request;
+        const result = DocumentService.createDocument(title, content);
+        return ResponseHelper.createSuccessResponse(result);
+      } catch (error) {
+        Logger.log("Error creating document: " + error);
+        return ResponseHelper.createErrorResponse(
+          500,
+          "Failed to create document"
+        );
+      }
+    }
+    /**
+     * ドキュメント更新リクエストを処理
+     */
+    static handleUpdateDocument(request) {
+      try {
+        const { documentId, content } = request;
+        const result = DocumentService.updateDocument(documentId, content);
+        return ResponseHelper.createSuccessResponse(result);
+      } catch (error) {
+        Logger.log("Error updating document: " + error);
+        return ResponseHelper.createErrorResponse(
+          500,
+          "Failed to update document"
+        );
+      }
+    }
+    /**
+     * ドキュメント削除リクエストを処理
+     */
+    static handleDeleteDocument(request) {
+      try {
+        const { documentId } = request;
+        const result = DocumentService.deleteDocument(documentId);
+        return ResponseHelper.createSuccessResponse(result);
+      } catch (error) {
+        Logger.log("Error deleting document: " + error);
+        return ResponseHelper.createErrorResponse(
+          500,
+          "Failed to delete document"
+        );
+      }
     }
   }
-  
-  static handleUpdateDocument(request) {
-    try {
-      const { documentId, content } = request;
-      const result = DocumentService.updateDocument(documentId, content);
-      return ResponseHelper.createSuccessResponse(result);
-    } catch (error) {
-      console.error('Error updating document:', error);
-      return ResponseHelper.createErrorResponse(500, 'Failed to update document');
-    }
-  }
-  
-  static handleDeleteDocument(request) {
-    try {
-      const { documentId } = request;
-      const result = DocumentService.deleteDocument(documentId);
-      return ResponseHelper.createSuccessResponse(result);
-    } catch (error) {
-      console.error('Error deleting document:', error);
-      return ResponseHelper.createErrorResponse(500, 'Failed to delete document');
-    }
-  }
-}
+})();
 
+// Entry point functions for Google Apps Script
 function doPost(e) {
   try {
     const request = JSON.parse(e.postData.contents);
@@ -122,7 +146,7 @@ function doPost(e) {
         return ResponseHelper.createErrorResponse(400, 'Invalid action');
     }
   } catch (error) {
-    console.error('Error in doPost:', error);
+    Logger.log('Error in doPost: ' + error);
     return ResponseHelper.createErrorResponse(500, 'Internal server error');
   }
 }

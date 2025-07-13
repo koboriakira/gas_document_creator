@@ -7,10 +7,13 @@ module.exports = {
     jest: true,
     browser: true,
   },
-  extends: ["eslint:recommended"],
+  extends: [
+    "eslint:recommended"
+  ],
+  parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: 2018,
-    sourceType: "module",
+    sourceType: "module"
   },
   globals: {
     // Google Apps Script globals
@@ -65,15 +68,21 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['test/**/*.js', '*.test.js', 'test_api.js'],
+      files: ['test/**/*.ts', '*.test.ts', 'test_api.js'],
       rules: {
         'no-console': 'off'
       }
     },
     {
-      files: ['Code.gs'],
+      files: ['Code.gs', '*.js'],
       rules: {
         'no-unused-vars': 'off' // GASでは関数が自動的にグローバルスコープで使用される
+      }
+    },
+    {
+      files: ['build.js'],
+      rules: {
+        'no-console': 'off'
       }
     }
   ]

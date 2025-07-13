@@ -5,7 +5,7 @@
   "main": "Code.gs",
   "scripts": {
     "deploy": "clasp push && clasp deploy",
-    "push": "clasp push",
+    "push": "npm run build && clasp push",
     "pull": "clasp pull",
     "login": "clasp login",
     "create": "clasp create --type webapp",
@@ -15,9 +15,12 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "lint": "eslint src/ test/ *.js",
-    "lint:fix": "eslint src/ test/ *.js --fix",
-    "validate": "npm run lint && npm test",
+    "build": "node build.js",
+    "build:watch": "node build.js --watch",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts test/**/*.ts *.js",
+    "lint:fix": "eslint src/**/*.ts test/**/*.ts *.js --fix",
+    "validate": "npm run type-check && npm run lint && npm test",
     "precommit": "npm run validate",
     "predeploy": "npm run validate",
     "prepare": "husky install",
@@ -37,31 +40,44 @@
     "@google/clasp": "^2.4.2",
     "@types/google-apps-script": "^1.0.83",
     "@types/jest": "^29.5.5",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "esbuild": "^0.19.5",
     "eslint": "^8.50.0",
     "husky": "^8.0.3",
     "jest": "^29.7.0",
-    "lint-staged": "^15.0.2"
+    "lint-staged": "^15.0.2",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
   },
   "jest": {
+    "preset": "ts-jest",
     "testEnvironment": "node",
     "setupFilesAfterEnv": [
       "./jest.setup.js"
     ],
     "collectCoverageFrom": [
-      "src/**/*.js",
-      "*.js",
-      "!*.test.js",
-      "!test_api.js",
-      "!jest.setup.js",
+      "src/**/*.ts",
+      "!src/**/*.d.ts",
       "!node_modules/**"
     ],
     "testMatch": [
-      "**/test/**/*.test.js",
-      "**/*.test.js"
-    ]
+      "**/test/**/*.test.ts",
+      "**/*.test.ts"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    }
   },
   "lint-staged": {
-    "*.js": [
+    "*.{ts,js}": [
       "eslint --fix",
       "git add"
     ]
