@@ -1,0 +1,14 @@
+# ESLint設定ファイル
+.eslintrc.js
+
+# その他の開発用ファイル
+node_modules/
+package.json
+package-lock.json
+jest.setup.js
+test/
+*.test.js
+README.md
+CLAUDE.md
+.git/
+.gitignore
