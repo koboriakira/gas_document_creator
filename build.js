@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/** @format */
 
 const esbuild = require('esbuild');
 const fs = require('fs');
@@ -15,12 +16,12 @@ const gasPlugin = {
   name: 'gas-plugin',
   setup(build) {
     build.onEnd((result) => {
-      if (result.errors.length > 0) return;
-      
+      if (result.errors.length > 0) {return;}
+
       console.log('📦 TypeScript build completed');
-      
-      // Code.gsファイルの生成
-      generateCodeGS();
+
+      // Google Apps Script形式に変換
+      convertToGasFormat();
     });
   }
 };
@@ -29,13 +30,9 @@ const gasPlugin = {
  * メインのビルド設定
  */
 const buildConfig = {
-  entryPoints: [
-    'src/documentService.ts',
-    'src/responseHelper.ts', 
-    'src/requestHandler.ts'
-  ],
-  bundle: false,
-  outdir: 'dist',
+  entryPoints: ['src/index.ts'],
+  bundle: true,
+  outfile: 'Code.gs',
   format: 'iife',
   target: 'es2019',
   platform: 'neutral',
@@ -44,76 +41,36 @@ const buildConfig = {
 };
 
 /**
- * Code.gsファイルを生成
+ * Google Apps Script形式に変換
  */
-function generateCodeGS() {
-  const distFiles = [
-    'dist/documentService.js',
-    'dist/responseHelper.js',
-    'dist/requestHandler.js'
-  ];
-  
-  let codeContent = `// Google Apps Script Document Creator API
-// Generated from TypeScript sources
-
-`;
-
-  // 各ファイルの内容を結合してGoogle Apps Script形式に変換
-  distFiles.forEach(filePath => {
-    if (fs.existsSync(filePath)) {
-      const content = fs.readFileSync(filePath, 'utf8');
-      
-      // TypeScriptのコンパイル結果をGoogle Apps Script形式に変換
-      let cleanContent = content
-        // IIFE削除
-        .replace(/^"use strict";\n\(\(\) => \{\n/, '')
-        .replace(/\n\}\)\(\);?$/, '')
-        // import文を削除（Google Apps Scriptでは不要）
-        .replace(/^\s*var import_\w+ = require\(.*\);\n/gm, '')
-        // import参照をクラス名に直接変更
-        .replace(/import_\w+\./g, '')
-        .trim();
-      
-      codeContent += cleanContent + '\n\n';
-    }
-  });
-
-  // エントリーポイント関数を追加
-  codeContent += `// Entry point functions for Google Apps Script
-function doPost(e) {
-  try {
-    const request = JSON.parse(e.postData.contents);
-    const action = request.action;
-    
-    switch (action) {
-      case 'createDocument':
-        return RequestHandler.handleCreateDocument(request);
-      case 'updateDocument':
-        return RequestHandler.handleUpdateDocument(request);
-      case 'deleteDocument':
-        return RequestHandler.handleDeleteDocument(request);
-      default:
-        return ResponseHelper.createErrorResponse(400, 'Invalid action');
-    }
-  } catch (error) {
-    Logger.log('Error in doPost: ' + error);
-    return ResponseHelper.createErrorResponse(500, 'Internal server error');
+function convertToGasFormat() {
+  if (!fs.existsSync('Code.gs')) {
+    console.error('❌ Code.gs not found');
+    return;
   }
-}
 
-function doGet(e) {
-  return ResponseHelper.createSuccessResponse({
-    message: 'Google Apps Script Document API',
-    version: '1.0.0',
-    endpoints: [
-      'POST /exec - Main API endpoint'
-    ]
-  });
-}
-`;
+  let content = fs.readFileSync('Code.gs', 'utf8');
 
-  fs.writeFileSync('Code.gs', codeContent);
-  console.log('✅ Code.gs generated successfully');
+  // esbuildのIIFE形式をGoogle Apps Script形式に変換
+  content = content
+    // 先頭のIIFE開始を削除
+    .replace(/^\(\(\) => \{\s*\n/m, '')
+    // 末尾のIIFE終了を削除
+    .replace(/\n\}\)\(\);?\s*$/m, '')
+    // "use strict" を削除
+    .replace(/^\s*"use strict";\s*\n/m, '')
+    // var クラス宣言をclass宣言に変換
+    .replace(/var (\w+) = class/g, 'class $1')
+    // class文の末尾のセミコロンを削除
+    .replace(/class (\w+) \{([^}]+)\};/g, 'class $1 {$2}')
+    // 各行の先頭の2つのスペースを削除（IIFEのインデント除去）
+    .replace(/^ {2}/gm, '')
+    // 先頭にコメントを追加
+    .replace(/^/, '// Google Apps Script Document Creator API\n// Generated from TypeScript sources\n\n');
+
+  // ファイルを書き戻し
+  fs.writeFileSync('Code.gs', content);
+  console.log('✅ Code.gs converted to Google Apps Script format');
 }
 
 /**

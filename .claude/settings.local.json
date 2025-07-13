@@ -14,7 +14,8 @@
       "Bash(npm run test:coverage:*)",
       "WebFetch(domain:zenn.dev)",
       "Bash(cp:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npm run lint:*)"
     ],
     "deny": []
   }

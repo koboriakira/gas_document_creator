@@ -1,2 +1,2 @@
 // Jest セットアップファイル
-require('./test/gas-mock.js');
+require('./test/gas-mock.ts');

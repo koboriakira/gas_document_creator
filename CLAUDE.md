@@ -17,8 +17,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run logs` - View GAS execution logs
 
 ### Code Quality & Validation
-- `npm run validate` - Run both linting and tests (required before commits/deploys)
-- `npm run lint` - Lint JavaScript files in src/, test/, and root
+- `npm run validate` - Run TypeScript type-check, linting and tests (required before commits/deploys)
+- `npm run type-check` - TypeScript type checking without emitting files
+- `npm run build` - Build TypeScript to Code.gs for Google Apps Script
+- `npm run build:watch` - Watch mode for TypeScript building
+- `npm run lint` - Lint TypeScript files in src/, test/
 - `npm run lint:fix` - Automatically fix ESLint errors where possible
 
 ### Documentation
@@ -28,21 +31,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-This project is a Google Apps Script web application that provides a REST API for Google Document operations. The codebase is designed for both Google Apps Script execution and local testing.
+This project is a Google Apps Script web application that provides a REST API for Google Document operations. The codebase is written in TypeScript and automatically compiled to Google Apps Script format.
 
-### Dual Environment Structure
+### TypeScript-First Development
 
-The code uses a unique dual-environment approach:
+The development workflow is TypeScript-centric:
 
-1. **Google Apps Script Environment**: All classes are defined directly in `Code.gs` for GAS execution
-2. **Node.js Test Environment**: Separate modular files in `src/` with conditional exports for Jest testing
+1. **TypeScript Source**: All development happens in TypeScript files in `src/`
+2. **Automatic Compilation**: Build process generates `Code.gs` from TypeScript sources
+3. **Type Safety**: Full TypeScript type checking for Google Apps Script APIs
+4. **Modern Development**: ES modules, interfaces, and TypeScript features
 
 ### Core Components
 
-- **DocumentService** (`src/documentService.js`): Business logic for document CRUD operations
-- **RequestHandler** (`src/requestHandler.js`): HTTP request routing and error handling
-- **ResponseHelper** (`src/responseHelper.js`): Standardized JSON response formatting
-- **Code.gs**: Main GAS entry point containing duplicate class definitions for runtime
+- **index.ts**: Main entry point with `doPost` and `doGet` functions
+- **DocumentService** (`src/documentService.ts`): Business logic for document CRUD operations with TypeScript interfaces
+- **RequestHandler** (`src/requestHandler.ts`): HTTP request routing and error handling with typed request interfaces
+- **ResponseHelper** (`src/responseHelper.ts`): Standardized JSON response formatting with Google Apps Script types
+- **Code.gs**: Auto-generated GAS execution file (do not edit manually)
 
 ### API Structure
 
@@ -67,14 +73,16 @@ The web app exposes a single endpoint that handles multiple actions via POST req
 
 **⚠️ IMPORTANT: All code changes must pass validation before completion**
 
-1. Modify code in `src/` files first
-2. Run validation: `npm run validate` (lint + tests)
-3. Check coverage: `npm run test:coverage`
-4. Manually sync changes to `Code.gs` (classes must be identical)
-5. Deploy with `npm run deploy` (auto-validates before deploy)
+1. Modify TypeScript code in `src/` files
+2. Run validation: `npm run validate` (type-check + lint + tests)
+3. Build for GAS: `npm run build` (generates Code.gs automatically)
+4. Check coverage: `npm run test:coverage`
+5. Deploy with `npm run deploy` (auto-validates and builds before deploy)
 6. Test live API with `test_api.js`
 
-**Definition of Done**: ESLint passes + All tests pass + Coverage maintained
+**Definition of Done**: TypeScript compiles + ESLint passes + All tests pass + Coverage maintained
+
+**Key Benefit**: No manual synchronization needed - Code.gs is automatically generated from TypeScript
 
 See `DEVELOPMENT.md` for complete development rules and guidelines.
 

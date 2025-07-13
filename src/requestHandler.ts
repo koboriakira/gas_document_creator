@@ -22,7 +22,7 @@ interface DeleteDocumentRequest {
   documentId: string;
 }
 
-type DocumentRequest = CreateDocumentRequest | UpdateDocumentRequest | DeleteDocumentRequest;
+// type DocumentRequest = CreateDocumentRequest | UpdateDocumentRequest | DeleteDocumentRequest;
 
 /**
  * リクエストハンドラークラス

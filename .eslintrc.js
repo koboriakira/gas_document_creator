@@ -30,6 +30,7 @@ module.exports = {
     GmailApp: "readonly",
     CalendarApp: "readonly",
     UrlFetchApp: "readonly",
+    GoogleAppsScript: "readonly",
   },
   rules: {
     // Style rules

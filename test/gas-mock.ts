@@ -4,7 +4,7 @@
 
 // DocumentApp のモック
 const DocumentApp = {
-  create: jest.fn().mockImplementation((title) => {
+  create: jest.fn().mockImplementation((title: string) => {
     const mockDoc = {
       getId: jest.fn().mockReturnValue('mock-document-id-' + Date.now()),
       getName: jest.fn().mockReturnValue(title),
@@ -21,7 +21,7 @@ const DocumentApp = {
     };
     return mockDoc;
   }),
-  openById: jest.fn().mockImplementation((id) => {
+  openById: jest.fn().mockImplementation((id: string) => {
     const mockDoc = {
       getId: jest.fn().mockReturnValue(id),
       getName: jest.fn().mockReturnValue('Mock Document'),
@@ -38,7 +38,7 @@ const DocumentApp = {
 
 // DriveApp のモック
 const DriveApp = {
-  getFileById: jest.fn().mockImplementation((id) => {
+  getFileById: jest.fn().mockImplementation((id: string) => {
     return {
       getId: jest.fn().mockReturnValue(id),
       getName: jest.fn().mockReturnValue('Mock File'),
@@ -52,7 +52,7 @@ const DriveApp = {
 
 // Utilities のモック
 const Utilities = {
-  formatDate: jest.fn().mockImplementation((date, _timeZone, _format) => {
+  formatDate: jest.fn().mockImplementation((date: Date, _timeZone: string, _format: string) => {
     return date.toISOString();
   }),
   sleep: jest.fn()
@@ -65,7 +65,7 @@ const Logger = {
 
 // ContentService のモック
 const ContentService = {
-  createTextOutput: jest.fn().mockImplementation((content) => {
+  createTextOutput: jest.fn().mockImplementation((content: string) => {
     return {
       setMimeType: jest.fn().mockReturnThis(),
       getContent: jest.fn().mockReturnValue(content)
@@ -78,7 +78,7 @@ const ContentService = {
 
 // HtmlService のモック
 const HtmlService = {
-  createHtmlOutput: jest.fn().mockImplementation((content) => {
+  createHtmlOutput: jest.fn().mockImplementation((content: string) => {
     return {
       setTitle: jest.fn().mockReturnThis(),
       getContent: jest.fn().mockReturnValue(content)
