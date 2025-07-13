@@ -3,37 +3,32 @@
  * Main entry point
  */
 
+import { RequestHandler } from './requestHandler';
 import { ResponseHelper } from './responseHelper';
 
 /**
  * HTTP POSTリクエストのハンドラー
+ * OAuth 2.0認証対応版（USER_ACCESSING実行）
  */
 export function doPost(e: GoogleAppsScript.Events.DoPost): GoogleAppsScript.Content.TextOutput {
   try {
+    // ユーザー認証チェック
+    const user = Session.getActiveUser();
+    if (!user || !user.getEmail()) {
+      return ResponseHelper.createErrorResponse(401, 'Authentication required');
+    }
+
     const request = JSON.parse(e.postData.contents);
     const action = request.action;
 
-    // Test mode - return mock responses to verify webapp works without authentication
+    // 実際のGoogle API呼び出し（ユーザー認証を使用）
     switch (action) {
     case 'createDocument':
-      return ResponseHelper.createSuccessResponse({
-        documentId: 'mock_doc_' + new Date().getTime(),
-        title: request.title || 'Test Document',
-        message: 'Mock document created successfully (authentication test)',
-        timestamp: new Date().toISOString()
-      });
+      return RequestHandler.handleCreateDocument(request);
     case 'updateDocument':
-      return ResponseHelper.createSuccessResponse({
-        documentId: request.documentId,
-        message: 'Mock document updated successfully (authentication test)',
-        timestamp: new Date().toISOString()
-      });
+      return RequestHandler.handleUpdateDocument(request);
     case 'deleteDocument':
-      return ResponseHelper.createSuccessResponse({
-        documentId: request.documentId,
-        message: 'Mock document deleted successfully (authentication test)',
-        timestamp: new Date().toISOString()
-      });
+      return RequestHandler.handleDeleteDocument(request);
     default:
       return ResponseHelper.createErrorResponse(400, 'Invalid action');
     }
@@ -45,22 +40,40 @@ export function doPost(e: GoogleAppsScript.Events.DoPost): GoogleAppsScript.Cont
 
 /**
  * HTTP GETリクエストのハンドラー
+ * OAuth 2.0認証対応版
  */
 export function doGet(_e: GoogleAppsScript.Events.DoGet): GoogleAppsScript.Content.TextOutput {
-  // Create response directly without using ResponseHelper to avoid any potential issues
-  const response = {
-    success: true,
-    data: {
-      message: 'Google Apps Script Document API',
-      version: '1.0.0',
-      timestamp: new Date().toISOString(),
-      endpoints: [
-        'POST /exec - Main API endpoint'
-      ]
-    }
-  };
+  try {
+    // ユーザー認証チェック
+    const user = Session.getActiveUser();
+    const userEmail = user ? user.getEmail() : null;
 
-  return ContentService
-    .createTextOutput(JSON.stringify(response))
-    .setMimeType(ContentService.MimeType.JSON);
+    const response = {
+      success: true,
+      data: {
+        message: 'Google Apps Script Document API (OAuth 2.0)',
+        version: '1.0.0',
+        timestamp: new Date().toISOString(),
+        authenticated: !!userEmail,
+        user: userEmail || 'anonymous',
+        endpoints: [
+          'GET /exec - API status (requires OAuth 2.0)',
+          'POST /exec - Document operations (requires OAuth 2.0)'
+        ],
+        authInfo: {
+          required: true,
+          type: 'OAuth 2.0',
+          scopes: [
+            'https://www.googleapis.com/auth/documents',
+            'https://www.googleapis.com/auth/drive'
+          ]
+        }
+      }
+    };
+
+    return ResponseHelper.createSuccessResponse(response.data);
+  } catch (error) {
+    Logger.log('Error in doGet: ' + error);
+    return ResponseHelper.createErrorResponse(500, 'Internal server error');
+  }
 }
