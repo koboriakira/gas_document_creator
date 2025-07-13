@@ -24,11 +24,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm test
+      - name: Run validation (lint + tests)
+        run: npm run validate
 
-      - name: Run linting
-        run: npm run lint
+      - name: Check test coverage
+        run: npm run test:coverage
 
   deploy:
     needs: test

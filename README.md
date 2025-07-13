@@ -72,7 +72,31 @@ npm run docs:open
 
 ブラウザで http://localhost:3000/docs.html にアクセスするとSwagger UIでインタラクティブなAPI仕様書が表示されます。
 
-## テスト
+## 開発フロー
+
+### 🚦 実装完了の定義
+
+以下をすべて満たした時点で実装完了とします：
+
+✅ **ESLintエラーなし** - コードスタイルと品質ルールに準拠  
+✅ **全テストPASS** - 既存機能の回帰がない  
+✅ **新機能のテスト追加** - 新しい機能には対応するテストを作成  
+✅ **テストカバレッジ維持** - カバレッジが低下していない
+
+### 必須コマンド
+
+```bash
+# リンター + テスト実行（コミット前必須）
+npm run validate
+
+# テストカバレッジ確認
+npm run test:coverage
+
+# ESLintエラーの自動修正
+npm run lint:fix
+```
+
+### テスト
 
 ```bash
 # 単体テスト実行
@@ -84,6 +108,8 @@ npm run test:watch
 # カバレッジレポート生成
 npm run test:coverage
 ```
+
+詳細な開発ルールは `DEVELOPMENT.md` をご参照ください。
 
 ## GitHub Actions設定
 

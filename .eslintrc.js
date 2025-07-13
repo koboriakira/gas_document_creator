@@ -29,13 +29,11 @@ module.exports = {
     UrlFetchApp: "readonly",
   },
   rules: {
+    // Style rules
     indent: ["error", 2],
     "linebreak-style": ["error", "unix"],
     quotes: ["error", "single"],
     semi: ["error", "always"],
-    "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-    "no-console": "warn",
-    "no-debugger": "error",
     "no-trailing-spaces": "error",
     "eol-last": "error",
     "comma-dangle": ["error", "never"],
@@ -49,5 +47,34 @@ module.exports = {
         asyncArrow: "always",
       },
     ],
+    
+    // Code quality rules
+    "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+    "no-console": "warn",
+    "no-debugger": "error",
+    "prefer-const": "error",
+    "no-var": "error",
+    "eqeqeq": "error",
+    "curly": "error",
+    "no-implicit-globals": "error",
+    "no-throw-literal": "error",
+    
+    // ES6+ rules
+    "arrow-spacing": "error",
+    "template-curly-spacing": "error"
   },
+  overrides: [
+    {
+      files: ['test/**/*.js', '*.test.js', 'test_api.js'],
+      rules: {
+        'no-console': 'off'
+      }
+    },
+    {
+      files: ['Code.gs'],
+      rules: {
+        'no-unused-vars': 'off' // GASでは関数が自動的にグローバルスコープで使用される
+      }
+    }
+  ]
 };

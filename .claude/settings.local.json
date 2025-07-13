@@ -8,7 +8,10 @@
       "Bash(mkdir:*)",
       "Bash(npm test)",
       "Bash(ls:*)",
-      "Bash(npm run docs:serve:*)"
+      "Bash(npm run docs:serve:*)",
+      "Bash(touch:*)",
+      "Bash(npm run validate:*)",
+      "Bash(npm run test:coverage:*)"
     ],
     "deny": []
   }

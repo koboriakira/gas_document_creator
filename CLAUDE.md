@@ -16,8 +16,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run open` - Open GAS editor in browser
 - `npm run logs` - View GAS execution logs
 
-### Linting
+### Code Quality & Validation
+- `npm run validate` - Run both linting and tests (required before commits/deploys)
 - `npm run lint` - Lint JavaScript files in src/, test/, and root
+- `npm run lint:fix` - Automatically fix ESLint errors where possible
 
 ### Documentation
 - `npm run docs:serve` - Start local server and open API documentation in browser
@@ -63,11 +65,18 @@ The web app exposes a single endpoint that handles multiple actions via POST req
 
 ### Development Workflow
 
+**⚠️ IMPORTANT: All code changes must pass validation before completion**
+
 1. Modify code in `src/` files first
-2. Run tests locally with `npm test`
-3. Manually sync changes to `Code.gs` (classes must be identical)
-4. Deploy with `npm run deploy`
-5. Test live API with `test_api.js`
+2. Run validation: `npm run validate` (lint + tests)
+3. Check coverage: `npm run test:coverage`
+4. Manually sync changes to `Code.gs` (classes must be identical)
+5. Deploy with `npm run deploy` (auto-validates before deploy)
+6. Test live API with `test_api.js`
+
+**Definition of Done**: ESLint passes + All tests pass + Coverage maintained
+
+See `DEVELOPMENT.md` for complete development rules and guidelines.
 
 ## API Testing
 
