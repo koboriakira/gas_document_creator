@@ -12,3 +12,6 @@ coverage/
 # Auto-generated Google Apps Script files
 Code.gs
 dist
+
+# Google Cloud Service Account Key
+service-account-key.json

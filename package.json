@@ -81,5 +81,9 @@
       "eslint --fix",
       "git add"
     ]
+  },
+  "dependencies": {
+    "googleapis": "^152.0.0",
+    "jsonwebtoken": "^9.0.2"
   }
 }

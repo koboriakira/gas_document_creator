@@ -128,3 +128,7 @@ mainブランチへのpush時に自動デプロイが実行されます。
 - `GOOGLE_APPLICATION_CREDENTIALS`: Googleサービスアカウント認証情報（任意）
 
 **注意**: TypeScriptソースファイルや開発ツールはデプロイされません（.claspignoreで除外）
+
+## 利用
+
+- サービスアカウント認証が必要

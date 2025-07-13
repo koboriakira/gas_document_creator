@@ -15,7 +15,11 @@
       "WebFetch(domain:zenn.dev)",
       "Bash(cp:*)",
       "Bash(npm run build:*)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(npx swagger-codegen validate:*)",
+      "Bash(npx @apidevtools/swagger-parser validate:*)",
+      "Bash(clasp:*)",
+      "Bash(npm run deploy:*)"
     ],
     "deny": []
   }
