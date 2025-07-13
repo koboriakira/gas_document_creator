@@ -8,3 +8,7 @@ node_modules/
 # Documentation build artifacts
 docs/
 coverage/
+
+# Auto-generated Google Apps Script files
+Code.gs
+dist

@@ -19,10 +19,12 @@ npm run login
 npm run create
 ```
 
-4. スクリプトをデプロイ:
+4. TypeScriptからCode.gsを生成してデプロイ:
 ```bash
 npm run deploy
 ```
+
+**注意**: `Code.gs`は`src/index.ts`から自動生成されます。手動で編集しないでください。
 
 ## API エンドポイント
 

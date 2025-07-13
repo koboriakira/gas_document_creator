@@ -4,7 +4,7 @@
   "description": "Google Apps Script API for Google Documents operations",
   "main": "Code.gs",
   "scripts": {
-    "deploy": "clasp push && clasp deploy",
+    "deploy": "npm run build && clasp push && clasp deploy",
     "push": "npm run build && clasp push",
     "pull": "clasp pull",
     "login": "clasp login",

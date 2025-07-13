@@ -65,9 +65,10 @@ The web app exposes a single endpoint that handles multiple actions via POST req
 
 ### Key Constraints
 
-- Classes must be duplicated between `Code.gs` and `src/` files due to GAS runtime limitations
+- `Code.gs` is auto-generated from TypeScript sources - never edit manually
 - All GAS-specific APIs (DocumentApp, DriveApp, etc.) are mocked for testing
 - The web app is configured for public access (`"access": "ANYONE"`) in `appsscript.json`
+- `Code.gs` is excluded from version control (.gitignore) as it's a build artifact
 
 ### Development Workflow
 
