@@ -99,7 +99,14 @@ Automated deployment is configured via `.github/workflows/deploy.yml`. Required 
 - **CLASP_CONFIG**: Contents of `.clasp.json` (project configuration with scriptId)
 - **GOOGLE_APPLICATION_CREDENTIALS**: Google service account JSON (optional, for enhanced authentication)
 
-The workflow runs tests first, then deploys to GAS only on main branch pushes.
+The workflow runs tests first, builds TypeScript to Code.gs, then deploys only the build artifacts to GAS on main branch pushes.
+
+### Deployment Process
+
+1. **Validation**: TypeScript type-check + ESLint + Jest tests
+2. **Build**: `npm run build` generates Code.gs from TypeScript sources
+3. **Deploy**: Only Code.gs and appsscript.json are pushed to Google Apps Script
+4. **Exclusions**: .claspignore ensures TypeScript source files and development tools are not deployed
 
 ## API Documentation
 

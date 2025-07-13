@@ -47,10 +47,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build TypeScript to Code.gs
+        run: npm run build
+
       - name: Setup clasp credentials
         run: |
-          mkdir -p ~/.config/@google
-          # ローカルの`.clasprc.json`をGitHub Secretsに追加する
           echo '${{ secrets.CLASP_CREDENTIALS }}' > ~/.clasprc.json
 
       - name: Install clasp globally

@@ -113,9 +113,18 @@ npm run test:coverage
 
 詳細な開発ルールは `DEVELOPMENT.md` をご参照ください。
 
-## GitHub Actions設定
+## GitHub Actions自動デプロイ
 
-以下のシークレットを設定してください:
-- `CLASP_CREDENTIALS`: clasp認証情報
-- `CLASP_CONFIG`: .clasp.json設定
-- `GOOGLE_APPLICATION_CREDENTIALS`: Googleサービスアカウント認証情報
+mainブランチへのpush時に自動デプロイが実行されます。
+
+### デプロイフロー
+1. **検証**: TypeScript型チェック + ESLint + Jest テスト
+2. **ビルド**: TypeScriptからCode.gs生成
+3. **デプロイ**: Code.gsとappsscript.jsonのみをGoogle Apps Scriptに送信
+
+### 必要なGitHub Secrets
+- `CLASP_CREDENTIALS`: clasp認証情報（~/.clasprc.jsonの内容）
+- `CLASP_CONFIG`: .clasp.json設定（scriptIdを含む）
+- `GOOGLE_APPLICATION_CREDENTIALS`: Googleサービスアカウント認証情報（任意）
+
+**注意**: TypeScriptソースファイルや開発ツールはデプロイされません（.claspignoreで除外）

@@ -1,14 +1,43 @@
-# ESLint設定ファイル
-.eslintrc.js
+# TypeScript source files - not needed in GAS
+src/**
+test/**
 
-# その他の開発用ファイル
-node_modules/
+# Build and development files
+node_modules/**
+dist/**
+coverage/**
+docs/**
+
+# Development configuration
+.git/**
+.github/**
+.eslintrc.js
+jest.setup.js
+tsconfig.json
+build.js
+.gitignore
+.claspignore
+
+# Documentation and development files
+*.md
+test_api.js
+openapi.yaml
+docs.html
+
+# Package management
 package.json
 package-lock.json
-jest.setup.js
-test/
-*.test.js
-README.md
-CLAUDE.md
-.git/
-.gitignore
+
+# Temporary files
+*.log
+.DS_Store
+.vscode/**
+
+# Include only these files for GAS deployment:
+# - Code.gs (auto-generated from TypeScript)
+# - appsscript.json (GAS configuration)
+
+# Explicitly exclude everything else
+**/*
+!Code.gs
+!appsscript.json

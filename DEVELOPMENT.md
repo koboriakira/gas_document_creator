@@ -117,8 +117,11 @@ npm run prepare
 
 GitHub Actionsで以下を自動実行：
 
-1. **Pull Request**: lint + test実行
-2. **Main branch**: lint + test + coverage + deploy
+1. **Pull Request**: TypeScript type-check + lint + test実行
+2. **Main branch**: 
+   - TypeScript type-check + lint + test + coverage
+   - TypeScriptビルド（Code.gs生成）
+   - Google Apps Scriptへのデプロイ（ビルド成果物のみ）
 
 ### ローカル開発
 
